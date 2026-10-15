@@ -9,7 +9,31 @@ function App() {
   const arrayColumn = Object.values(kanban)
 
   const whenDragging = (result: DropResult) => {
-    console.log("Somebody drag a card", result)
+    const { source, destination } = result
+    //didnt drop at any column
+    if(!destination){
+      return
+    }
+    //same column, same place
+    if(source.droppableId === destination.droppableId && source.index === destination.index){
+      return
+    }
+
+    const updatedKanban = { ...kanban }
+    const originColumn = updatedKanban[source.droppableId]
+    const newColumn = updatedKanban[destination.droppableId]
+    const [movedCard] = originColumn.cards.splice(source.index, 1)
+    
+    //same column, different place
+    if(source.droppableId === destination.droppableId){
+      originColumn.cards.splice(destination.index, 0 , movedCard)
+    }
+    //diferent column
+    else{
+      newColumn.cards.splice(destination.index, 0 , movedCard)
+    }
+
+    setKanban(updatedKanban)
   }
 
   return (
@@ -26,7 +50,7 @@ function App() {
                   </h2>
                   <div className="flex flex-col gap-3">
                     {column.cards.map((card, index) => (
-                      // 2. Criamos um Draggable para cada card do colunm
+                      // 2. Criamos um Draggable para cada card do column
                       <Draggable key={card.id} draggableId={card.id} index={index}>
                         {(provided) => (
                           <div
