@@ -5,6 +5,8 @@ import type { StateKanban } from "./types.ts"
 import type { DropResult } from "@hello-pangea/dnd"
 
 function App() {
+  const [newTitle, setNewTitle] = useState("")
+  const [newDesciption, setNewDesciption] = useState("")
   const [kanban, setKanban] = useState<StateKanban>(data)
   const arrayColumn = Object.values(kanban)
 
@@ -39,6 +41,44 @@ function App() {
   return (
     <DragDropContext onDragEnd={whenDragging}>
       <div className="min-h-screen bg-neutral-950 text-neutral-100 p-8">
+        <form className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 max-w-7xl mx-auto mb-8 flex flex-col md:flex-row gap-4 items-end">
+          
+          {/* Input do Título */}
+          <div className="flex-1 w-full">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">
+              Title of the task
+            </label>
+            <input 
+              type="text" 
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Ex: Learn TypeScript" 
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-neutral-500 transition-colors"
+            />
+          </div>
+          
+          {/* Input da Descrição */}
+          <div className="flex-1 w-full">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">
+              Description
+            </label>
+            <input 
+              type="text" 
+              value={newDesciption}
+              onChange={(e) => setNewDesciption(e.target.value)}
+              placeholder="Tell what needs to be done..." 
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-neutral-500 transition-colors"
+            />
+          </div>
+
+          {/* Botão de Enviar */}
+          <button 
+            type="submit" 
+            className="bg-white text-neutral-950 font-bold px-6 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer w-full md:w-auto h-[42px]"
+          >
+            + Create
+          </button>
+        </form>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto items-start">
           {arrayColumn.map((column) => (
             
