@@ -5,8 +5,7 @@ import type { StateKanban } from "./types.ts"
 import type { DropResult } from "@hello-pangea/dnd"
 
 function App() {
-  const [newTitle, setNewTitle] = useState("")
-  const [newDesciption, setNewDesciption] = useState("")
+  //kanban drag and drop logic
   const [kanban, setKanban] = useState<StateKanban>(data)
   const arrayColumn = Object.values(kanban)
 
@@ -38,10 +37,33 @@ function App() {
     setKanban(updatedKanban)
   }
 
+  // "CRUD" of the cards
+  const [newTitle, setNewTitle] = useState("")
+  const [newDesciption, setNewDesciption] = useState("")
+  
+  const addTask = (e: React.SubmitEvent) => {
+    e.preventDefault()
+    if(!newTitle.trim()){
+      return
+    }
+    const newCard = {
+      id: `task-${Date.now()}`,
+      title: newTitle,
+      description: newDesciption,
+      tags: 'new',
+      priority: 'medium' as const
+    }
+    const newKanban = { ...kanban }
+    newKanban['todo'].cards.unshift(newCard)
+    setKanban(newKanban)
+    setNewTitle("")
+    setNewDesciption("")
+  } 
+
   return (
     <DragDropContext onDragEnd={whenDragging}>
       <div className="min-h-screen bg-neutral-950 text-neutral-100 p-8">
-        <form className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 max-w-7xl mx-auto mb-8 flex flex-col md:flex-row gap-4 items-end">
+        <form onSubmit={addTask} className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 max-w-7xl mx-auto mb-8 flex flex-col md:flex-row gap-4 items-end">
           
           {/* Input do Título */}
           <div className="flex-1 w-full">
