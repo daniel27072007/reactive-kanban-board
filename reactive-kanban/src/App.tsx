@@ -71,51 +71,51 @@ function App() {
           
           {/* Input do Título */}
           <div className="md:col-span-1 w-full">
-            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Título</label>
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Title</label>
             <input 
               type="text" 
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="Ex: Estudar API" 
+              placeholder="Ex: Study about APIs" 
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
           
           {/* Input da Descrição */}
           <div className="md:col-span-1 w-full">
-            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Descrição</label>
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Descripition</label>
             <input 
               type="text" 
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
-              placeholder="O que precisa ser feito..." 
+              placeholder="What needs to be done..." 
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
 
           {/* Input das Tags */}
           <div className="md:col-span-1 w-full">
-            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Tags (separadas por vírgula)</label>
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Tags</label>
             <input 
               type="text" 
               value={newTags}
               onChange={(e) => setNewTags(e.target.value)}
-              placeholder="Ex: Web, Estudo, Urgente" 
+              placeholder="Ex: Web, Study, Urgent, Config" 
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
 
           {/* Select da Prioridade */}
           <div className="md:col-span-1 w-full">
-            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Prioridade</label>
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Priority</label>
             <select 
               value={newPriority}
               onChange={(e) => setNewPriority(e.target.value as 'low' | 'medium' | 'high')}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors cursor-pointer h-[38px]"
             >
-              <option value="low">Baixa</option>
-              <option value="medium">Média</option>
-              <option value="high">Alta</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
 
@@ -124,7 +124,7 @@ function App() {
             type="submit" 
             className="bg-white text-neutral-950 font-bold px-6 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer w-full h-[38px] text-sm md:col-span-1"
           >
-            + Adicionar
+            + Create
           </button>
         </form>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto items-start">
@@ -207,7 +207,7 @@ function App() {
                     {/* Aviso visual caso esteja vazio */}
                     {column.cards.length === 0 && (
                       <div className="my-auto text-center text-xs text-neutral-600 border border-dashed border-neutral-800/60 rounded-lg p-4 pointer-events-none">
-                        Arraste algo para cá
+                        Drop something here...
                       </div>
                     )}
                   </div>
