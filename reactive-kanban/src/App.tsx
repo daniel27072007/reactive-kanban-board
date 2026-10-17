@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { data } from './mockData.ts'
 import type { StateKanban, Priority } from "./types.ts"
@@ -6,7 +6,20 @@ import type { DropResult } from "@hello-pangea/dnd"
 
 function App() {
   //kanban drag and drop logic
-  const [kanban, setKanban] = useState<StateKanban>(data)
+  const [kanban, setKanban] = useState<StateKanban>(() => {
+    const dataSaved = localStorage.getItem('kanban_cards');
+    
+    if (dataSaved) {
+      try {
+        // Converte o texto salvo de volta para o tipo StateKanban
+        return JSON.parse(dataSaved) as StateKanban;
+      } catch (error) {
+        console.error("Error when reading localStorage, using datamock.", error);
+        return data;
+      }
+    }
+    return data; // Fallback se não houver nada salvo
+  });
   const arrayColumn = Object.values(kanban)
 
   const whenDragging = (result: DropResult) => {
@@ -63,6 +76,12 @@ function App() {
     setNewTags("")
     setNewPriority("medium")
   }
+
+  //saving kanban in localStorage
+  useEffect(()=>{
+    const newDataToSave = JSON.stringify(kanban)
+    localStorage.setItem('kanban_cards', newDataToSave)
+  }, [kanban])
 
   return (
     <DragDropContext onDragEnd={whenDragging}>
