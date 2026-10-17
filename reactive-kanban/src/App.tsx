@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { data } from './mockData.ts'
-import type { StateKanban } from "./types.ts"
+import type { StateKanban, Priority } from "./types.ts"
 import type { DropResult } from "@hello-pangea/dnd"
 
 function App() {
@@ -39,8 +39,10 @@ function App() {
 
   // "CRUD" of the cards
   const [newTitle, setNewTitle] = useState("")
-  const [newDesciption, setNewDesciption] = useState("")
-  
+  const [newDescription, setNewDescription] = useState("")
+  const [newTags, setNewTags] = useState('')
+  const [newPriority, setNewPriority] = useState<Priority>('medium')
+
   const addTask = (e: React.SubmitEvent) => {
     e.preventDefault()
     if(!newTitle.trim()){
@@ -49,56 +51,80 @@ function App() {
     const newCard = {
       id: `task-${Date.now()}`,
       title: newTitle,
-      description: newDesciption,
-      tags: 'new',
-      priority: 'medium' as const
+      description: newDescription,
+      tags: newTags.trim() ? newTags : 'Other',
+      priority: newPriority
     }
     const newKanban = { ...kanban }
     newKanban['todo'].cards.unshift(newCard)
     setKanban(newKanban)
     setNewTitle("")
-    setNewDesciption("")
-  } 
+    setNewDescription("")
+    setNewTags("")
+    setNewPriority("medium")
+  }
 
   return (
     <DragDropContext onDragEnd={whenDragging}>
       <div className="min-h-screen bg-neutral-950 text-neutral-100 p-8">
-        <form onSubmit={addTask} className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 max-w-7xl mx-auto mb-8 flex flex-col md:flex-row gap-4 items-end">
+        <form onSubmit={addTask} className="bg-neutral-900 p-6 rounded-xl border border-neutral-800 max-w-7xl mx-auto mb-8 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           
           {/* Input do Título */}
-          <div className="flex-1 w-full">
-            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">
-              Title of the task
-            </label>
+          <div className="md:col-span-1 w-full">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Título</label>
             <input 
               type="text" 
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="Ex: Learn TypeScript" 
-              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-neutral-500 transition-colors"
+              placeholder="Ex: Estudar API" 
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
           
           {/* Input da Descrição */}
-          <div className="flex-1 w-full">
-            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">
-              Description
-            </label>
+          <div className="md:col-span-1 w-full">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Descrição</label>
             <input 
               type="text" 
-              value={newDesciption}
-              onChange={(e) => setNewDesciption(e.target.value)}
-              placeholder="Tell what needs to be done..." 
-              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-neutral-500 transition-colors"
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              placeholder="O que precisa ser feito..." 
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
+          </div>
+
+          {/* Input das Tags */}
+          <div className="md:col-span-1 w-full">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Tags (separadas por vírgula)</label>
+            <input 
+              type="text" 
+              value={newTags}
+              onChange={(e) => setNewTags(e.target.value)}
+              placeholder="Ex: Web, Estudo, Urgente" 
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
+            />
+          </div>
+
+          {/* Select da Prioridade */}
+          <div className="md:col-span-1 w-full">
+            <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Prioridade</label>
+            <select 
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value as 'low' | 'medium' | 'high')}
+              className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors cursor-pointer h-[38px]"
+            >
+              <option value="low">Baixa</option>
+              <option value="medium">Média</option>
+              <option value="high">Alta</option>
+            </select>
           </div>
 
           {/* Botão de Enviar */}
           <button 
             type="submit" 
-            className="bg-white text-neutral-950 font-bold px-6 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer w-full md:w-auto h-[42px]"
+            className="bg-white text-neutral-950 font-bold px-6 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer w-full h-[38px] text-sm md:col-span-1"
           >
-            + Create
+            + Adicionar
           </button>
         </form>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto items-start">
@@ -141,8 +167,35 @@ function App() {
                             {...provided.dragHandleProps}
                             className="bg-neutral-800 p-4 rounded-lg border border-neutral-700/50 shadow-sm cursor-grab text-white select-none active:cursor-grabbing w-full box-border mb-3"
                           >
-                            <h3 className="font-semibold text-base">{card.title}</h3>
-                            <p className="text-xs text-neutral-400 mt-1">{card.description}</p>
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <h3 className="font-semibold text-base text-white leading-tight">
+                                {card.title}
+                              </h3>
+                              
+                              {/* Badge dinâmica baseada na prioridade do card */}
+                              <span className={`text-[10px] uppercase font-extrabold px-2 py-0.5 rounded shrink-0 ${
+                                card.priority === 'high' ? 'bg-red-500/20 text-red-400' :
+                                card.priority === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                                'bg-emerald-500/20 text-emerald-400'
+                              }`}>
+                                {card.priority}
+                              </span>
+                            </div>
+                            <p className="text-xs text-neutral-400 line-clamp-2 mb-3">
+                              {card.description}
+                            </p>
+
+                            {/* Mágica das Tags: Quebra a string por vírgula e faz um loop criando as hashtags */}
+                            <div className="flex flex-wrap gap-1">
+                              {card.tags.split(',').map((tag, idx) => (
+                                <span 
+                                  key={idx}
+                                  className="bg-neutral-700/50 text-[10px] text-neutral-300 px-2 py-0.5 rounded"
+                                >
+                                  #{tag.trim()}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </Draggable>
