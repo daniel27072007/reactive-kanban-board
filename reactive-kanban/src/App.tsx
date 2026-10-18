@@ -86,6 +86,28 @@ function App() {
     setKanban(updatedKanban)
   }
 
+  const saveEditTask = () => {
+    if (!editingCard) {
+      return
+    }
+    const updatedKanban = { ...kanban }
+    let cardFound = false
+    for(const colunmId in updatedKanban){
+      if(cardFound){
+        break
+      }
+      const colunm = updatedKanban[colunmId]
+      colunm.cards = colunm.cards.map((card) => {
+        if(card.id === editingCard.id){
+          cardFound = true
+          return editingCard
+        }
+        return card
+      })
+    }
+    setKanban(updatedKanban)
+  }
+
   //saving kanban in localStorage
   useEffect(()=>{
     const newDataToSave = JSON.stringify(kanban)
