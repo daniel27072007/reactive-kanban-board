@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import { data } from './mockData.ts'
-import type { StateKanban, Priority } from "./types.ts"
+import type { StateKanban, Priority, Card } from "./types.ts"
 import type { DropResult } from "@hello-pangea/dnd"
 
 function App() {
@@ -55,6 +55,8 @@ function App() {
   const [newDescription, setNewDescription] = useState("")
   const [newTags, setNewTags] = useState('')
   const [newPriority, setNewPriority] = useState<Priority>('medium')
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null) //guards the id of the card to show the dropdown only there
+  const [editingCard, setEditingCard] = useState<Card | null>(null) //guards the card that is being edited
 
   const addTask = (e: React.SubmitEvent) => {
     e.preventDefault()
@@ -184,27 +186,62 @@ function App() {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className="bg-neutral-800 p-4 rounded-lg border border-neutral-700/50 shadow-sm cursor-grab text-white select-none active:cursor-grabbing w-full box-border mb-3"
+                            // 1. ADICIONADO 'relative pb-8': Dá espaço embaixo para a prioridade não cobrir o texto
+                            className="bg-neutral-800 p-4 pb-8 rounded-lg border border-neutral-700/50 shadow-sm cursor-grab text-white select-none active:cursor-grabbing w-full box-border mb-3 relative group"
                           >
-                            <div className="flex items-start justify-between gap-2 mb-2">
+                            <div className="flex items-start justify-between gap-2 mb-2 pr-6">
                               <h3 className="font-semibold text-base text-white leading-tight">
                                 {card.title}
                               </h3>
-                              
-                              {/* Badge dinâmica baseada na prioridade do card */}
-                              <span className={`text-[10px] uppercase font-extrabold px-2 py-0.5 rounded shrink-0 ${
-                                card.priority === 'high' ? 'bg-red-500/20 text-red-400' :
-                                card.priority === 'medium' ? 'bg-amber-500/20 text-amber-400' :
-                                'bg-emerald-500/20 text-emerald-400'
-                              }`}>
-                                {card.priority}
-                              </span>
+                              <div className="absolute top-3 right-3 z-10">
+                                <button 
+                                  type="button"
+                                  className="text-neutral-400 hover:text-white p-1 rounded hover:bg-neutral-700 transition-colors cursor-pointer text-sm font-bold leading-none"
+                                  onClick={(e) => {
+                                    e.stopPropagation(); // Impede o arrasto do card
+                                    // Se já estiver aberto este, fecha. Se não, abre este.
+                                    setActiveDropdown(activeDropdown === card.id ? null : card.id);
+                                  }}
+                                >
+                                  •••
+                                </button>
+
+                                {/* O DROPDOWN REAL: Só renderiza se o activeDropdown for igual ao ID deste card */}
+                                {activeDropdown === card.id && (
+                                  <div 
+                                    className="absolute right-0 mt-1 w-28 bg-neutral-900 border border-neutral-700 rounded-lg shadow-xl overflow-hidden"
+                                    onClick={(e) => e.stopPropagation()} // Impede fechar ou arrastar ao clicar dentro do menu
+                                  >
+                                    <button
+                                      type="button"
+                                      className="w-full text-left px-3 py-2 text-xs text-neutral-200 hover:bg-neutral-800 hover:text-white transition-colors cursor-pointer font-medium"
+                                      onClick={() => {
+                                        setEditingCard(card); // Abre o modal com os dados deste card
+                                        setActiveDropdown(null); // Fecha o dropdown
+                                      }}
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors cursor-pointer font-medium border-t border-neutral-800"
+                                      onClick={() => {
+                                        alert('Função deletar será criada na próxima etapa!');
+                                        setActiveDropdown(null);
+                                      }}
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
                             </div>
+
                             <p className="text-xs text-neutral-400 line-clamp-2 mb-3">
                               {card.description}
                             </p>
 
-                            {/* Mágica das Tags: Quebra a string por vírgula e faz um loop criando as hashtags */}
+                            {/* Mágica das Tags */}
                             <div className="flex flex-wrap gap-1">
                               {card.tags.split(',').map((tag, idx) => (
                                 <span 
@@ -215,6 +252,15 @@ function App() {
                                 </span>
                               ))}
                             </div>
+
+                            {/* 3. RETOCADO: Badge de prioridade agora fixa no Canto Inferior Direito */}
+                            <span className={`absolute bottom-3 right-3 text-[10px] uppercase font-extrabold px-2 py-0.5 rounded shrink-0 ${
+                              card.priority === 'high' ? 'bg-red-500/20 text-red-400' :
+                              card.priority === 'medium' ? 'bg-amber-500/20 text-amber-400' :
+                              'bg-emerald-500/20 text-emerald-400'
+                            }`}>
+                              {card.priority}
+                            </span>
                           </div>
                         )}
                       </Draggable>
