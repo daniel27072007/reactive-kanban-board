@@ -79,6 +79,13 @@ function App() {
     setNewPriority("medium")
   }
 
+  const deleteTask = (colunmId : string, cardId: string) => {
+    const updatedKanban = { ...kanban }
+    const colunm = updatedKanban[colunmId]
+    colunm.cards = colunm.cards.filter(card => card.id !== cardId)
+    setKanban(updatedKanban)
+  }
+
   //saving kanban in localStorage
   useEffect(()=>{
     const newDataToSave = JSON.stringify(kanban)
@@ -97,7 +104,8 @@ function App() {
               type="text" 
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              placeholder="Ex: Study about APIs" 
+              placeholder="Ex: Study about APIs"
+              maxLength={30} 
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
@@ -109,7 +117,8 @@ function App() {
               type="text" 
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
-              placeholder="What needs to be done..." 
+              placeholder="What needs to be done..."
+              maxLength={50}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
@@ -122,6 +131,7 @@ function App() {
               value={newTags}
               onChange={(e) => setNewTags(e.target.value)}
               placeholder="Ex: Web, Study, Urgent, Config" 
+              maxLength={12}
               className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 transition-colors"
             />
           </div>
@@ -226,7 +236,7 @@ function App() {
                                       type="button"
                                       className="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors cursor-pointer font-medium border-t border-neutral-800"
                                       onClick={() => {
-                                        alert('Função deletar será criada na próxima etapa!');
+                                        deleteTask(column.id, card.id)
                                         setActiveDropdown(null);
                                       }}
                                     >
