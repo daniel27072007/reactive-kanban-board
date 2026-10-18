@@ -313,6 +313,90 @@ function App() {
             </div>
           ))}
         </div>
+
+        {editingCard && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+            <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-xl w-full max-w-md shadow-2xl relative">
+              
+              {/* Título do Modal */}
+              <h3 className="text-lg font-bold text-white mb-4">Edit Task</h3>
+              
+              {/* Campos do Formulário de Edição */}
+              <div className="space-y-4">
+                
+                {/* Input de Título */}
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Title</label>
+                  <input 
+                    type="text" 
+                    value={editingCard.title}
+                    onChange={(e) => setEditingCard({ ...editingCard, title: e.target.value })}
+                    maxLength={30}
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500"
+                  />
+                </div>
+
+                {/* Textarea de Descrição */}
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Description</label>
+                  <textarea 
+                    value={editingCard.description}
+                    onChange={(e) => setEditingCard({ ...editingCard, description: e.target.value })}
+                    maxLength={50}
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500 min-h-[80px]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Tags</label>
+                  <input 
+                    type="text" 
+                    value={editingCard.tags}
+                    onChange={(e) => setEditingCard({ ...editingCard, tags: e.target.value })}
+                    maxLength={12}
+                    className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-400 mb-1 uppercase tracking-wider">Title</label>
+                  <select
+                  value={editingCard.priority}
+                  onChange={(e) => setEditingCard({ ...editingCard, priority: e.target.value as 'low' | 'medium' | 'high' })}
+                  className="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-neutral-500"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                {/* Botões de Ação do Modal */}
+                <div className="flex gap-3 justify-end pt-2">
+                  <button
+                    type="button"
+                    className="bg-neutral-800 text-neutral-300 font-medium px-4 py-2 rounded-lg hover:bg-neutral-700 transition-colors cursor-pointer text-sm"
+                    onClick={() => setEditingCard(null)} // Fecha o modal ao resetar o estado para null
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="bg-white text-neutral-950 font-bold px-4 py-2 rounded-lg hover:bg-neutral-200 transition-colors cursor-pointer text-sm"
+                    onClick={() => {
+                      saveEditTask()
+                      setEditingCard(null)
+                    }}
+                  >
+                    Save Changes
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </DragDropContext>
   );
